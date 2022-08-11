@@ -23,6 +23,17 @@ app.use(session({
 }))
 
 app.get('/', (req, res) => {
+    if (req.session.errors) {
+        var arrayErros = req.session.errors;
+        req.session.errors = "";
+        return res.render('index', { NavActiveCad: true, error: arrayErros })
+    }
+
+    if (req.session.sucess) {
+        req.session.sucess = false;
+        return res.render('index', { NavActiveCad: true, MsgSucess: true })
+    }
+
     res.render('index', { NavActiveCad: true })
 })
 app.get('/users', (req, res) => {
@@ -53,7 +64,7 @@ app.post('/cad', (req, res) => {
     //verifica se o nome é valido e email
     if (!/^[A-Za-záàâãéèíóôõúçñÀÁÃÂÈÉÍÌòÒÔÕÚCÑ\s]+$/.test(nome)) { erros.push({ mensagem: "Nome Inválido!" }) };
     if (!/^[a-z0-9.]+@[a-z0-9]+\.[a-z]+\.([a-z]+)?$/i.test(email)) { erros.push({ mensagem: "Email Inválido!" }) };
-
+    console.log(email)
     if (erros.length > 0) {
         req.session.errors = erros;
         req.session.sucess = false;
